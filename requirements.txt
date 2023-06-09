@@ -1,5 +1,5 @@
-streamlit==1.23.1
-python
+streamlit
+
 fastAPI
-request
+requests
 numpy
