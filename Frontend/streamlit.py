@@ -3,6 +3,7 @@ from PIL import Image
 import requests
 import io
 import pandas as pd
+from filter_df import filter_dataframe
 
 # Set page tab display
 st.set_page_config(
@@ -38,13 +39,13 @@ if img_file_buffer is not None:
     # Display the image uploaded by the user
     image = Image.open(img_file_buffer)
     st.image(image, caption="Here's the image you uploaded ☝️")
-    st.write("Any other preferences?")
-    vegetarian = st.checkbox('vegetarian')
-    vegan = st.checkbox('vegan')
-    pescatarian = st.checkbox('pescatarian')
-    surprise = st.checkbox('surprise me')
-
+    #st.write("Any other preferences?")
+    #vegetarian = st.checkbox('vegetarian')
+    #vegan = st.checkbox('vegan')
+    #pescatarian = st.checkbox('pescatarian')
+    #surprise = st.checkbox('surprise me')
     # Make predictions when the user clicks the button
+    modify = st.checkbox("Add filters")
     if st.button('Make Predictions'):
         with st.spinner("Wait for it..."):
             # Send the image to the API endpoint
@@ -59,16 +60,18 @@ if img_file_buffer is not None:
             api_url = api_url + "/predict"
             response = requests.post(api_url, files={'img': image_bytes})
             st.write(response.status_code)
+            st.write(response.raise_for_status)
             if response.status_code == 200:
                 # Parse the predictions from the JSON response
                 data = response.json()
                 # Create a DataFrame from the predictions data
                 df = pd.DataFrame(data)
-
+                if modify:
+                    df = filter_dataframe(df)
                  # Display the predictions as a table
                 st.subheader("Recepis:")
-
-                if vegetarian:
+                st.dataframe(df)
+                """if vegetarian:
                     st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegetarian' in x)])
                 if vegan:
                     st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegan' in x)])
@@ -77,7 +80,7 @@ if img_file_buffer is not None:
                 if vegetarian and vegan:
                     st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegan' and 'Vegetarian' in x)])
                 if surprise:
-                    st.dataframe(df)
+                    st.dataframe(df)"""
 
             else:
                 st.error("Error making predictions. Please try again.")
