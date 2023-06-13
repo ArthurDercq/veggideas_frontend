@@ -38,6 +38,10 @@ if img_file_buffer is not None:
     # Display the image uploaded by the user
     image = Image.open(img_file_buffer)
     st.image(image, caption="Here's the image you uploaded ☝️")
+    st.write("Any other preferences?")
+    vegetarian = st.checkbox('vegetarian')
+    vegan = st.checkbox('vegan')
+    pescatarian = st.checkbox('pescatarian')
 
     # Make predictions when the user clicks the button
     if st.button('Make Predictions'):
@@ -56,11 +60,16 @@ if img_file_buffer is not None:
             st.write(response.status_code)
             if response.status_code == 200:
                 # Parse the predictions from the JSON response
-
                 data = response.json()
-
                 # Create a DataFrame from the predictions data
                 df = pd.DataFrame(data)
+
+                if vegetarian:
+                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegetarian' in x)])
+                if vegan:
+                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegan' in x)])
+                if pescatarian:
+                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Pescatarian' in x)])
 
                 # Display the predictions as a table
                 st.subheader("Predictions:")
