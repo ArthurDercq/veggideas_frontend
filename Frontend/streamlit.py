@@ -49,10 +49,7 @@ if img_file_buffer is not None:
     if st.button('Make Predictions'):
         with st.spinner("Wait for it..."):
             # Send the image to the API endpoint
-            # convert the PIL image to byte array
-            image_bytes = io.BytesIO()
-            image.save(image_bytes, format='JPEG')
-            image_bytes = image_bytes.getvalue()
+            image_bytes = img_file_buffer.getvalue()
 
             st.write("Sending image to the API...")
 
