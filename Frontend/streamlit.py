@@ -39,54 +39,38 @@ if img_file_buffer is not None:
     # Display the image uploaded by the user
     image = Image.open(img_file_buffer)
     st.image(image, caption="Here's the image you uploaded ☝️")
-    #st.write("Any other preferences?")
-    #vegetarian = st.checkbox('vegetarian')
-    #vegan = st.checkbox('vegan')
-    #pescatarian = st.checkbox('pescatarian')
-    #surprise = st.checkbox('surprise me')
     # Make predictions when the user clicks the button
-    with st.form("Basic form"):
-        modify = st.checkbox("Add filters")
+    #with st.form("Basic form"):
+        #modify = st.checkbox("Add filters")
         #make_predictions = st.button("Make predictions")
-        submitted = st.form_submit_button("Make predictions")
-        if submitted:
-         st.write("predictions")
+        #submitted = st.form_submit_button("Make predictions")
+        #if submitted:
+            #st.write("predictions")
 
-        with st.spinner("Wait for it..."):
-            # Send the image to the API endpoint
+    with st.spinner("Wait for it..."):
+                # Send the image to the API endpoint
             image_bytes = img_file_buffer.getvalue()
 
             st.write("Sending image to the API...")
 
-            # Use 'rb' if you get an error about 'bytes-like object is required, not str'
+                # Use 'rb' if you get an error about 'bytes-like object is required, not str'
             api_url = api_url + "/predict"
             response = requests.post(api_url, files={'img': image_bytes})
-            #response = st.cache_data(response)
-            st.write(response.status_code)
-            st.write(response.raise_for_status)
+                #response = st.cache_data(response)
             if response.status_code == 200:
                 # Parse the predictions from the JSON response
                 data = response.json()
-                # Create a DataFrame from the predictions data
-                df = pd.DataFrame(data)
+                st.write(data[0])
+                df = pd.DataFrame(data[1])
 
-                # Create a DataFrame from the predictions data
-                # Create a DataFrame from the predictions data
-                if modify:
-                    to_filter_columns = st.multiselect("Filter dataframe on", list(df.keys()))
-                    df = filter_dataframe(df, to_filter_columns)
-                st.dataframe(df)
-                """
-                if vegetarian:
-                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegetarian' in x)])
-                if vegan:
-                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegan' in x)])
-                if pescatarian:
-                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Pescatarian' in x)])
-                if vegetarian and vegan:
-                    st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegan' and 'Vegetarian' in x)])
-                if surprise:
-                    st.dataframe(df)"""
+                filtering = st.container()
+                with filtering:
+                    modify = st.checkbox("Filter result?")
+                    if modify:
+                        df = filter_dataframe(df)
+                        st.dataframe(df)
+                    else:
+                        st.dataframe(df)
 
-           # else:
-                #st.error("Error making predictions. Please try again.")
+            else:
+                st.error("Error making predictions. Please try again.")
