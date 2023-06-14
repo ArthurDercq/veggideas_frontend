@@ -3,7 +3,7 @@ from pandas.api.types import is_categorical_dtype, is_numeric_dtype
 import streamlit as st
 
 #def filter_dataframe(df: dict, to_filter_columns) -> dict:
-def filter_dataframe(df: dict) -> dict:
+def filter_dataframe(df):
     """
     Adds a UI on top of a dataframe to let viewers filter columns
 
@@ -22,13 +22,14 @@ def filter_dataframe(df: dict) -> dict:
             left, right = st.columns((1, 20))
             left.write("↳")
             # Treat columns with < 10 unique values as categorical
-            if isinstance(df[column], list) or len(set(df[column])) < 100:
-                user_cat_input = right.multiselect(
+            if isinstance(df[column], list) and len(set(df[column])) < 100:
+                user_cat_input = st.selectbox(
                     f"Values for {column}",
                     list(set(df[column])),
                     default=list(set(df[column])),
                 )
                 df = {k: v for k, v in df.items() if k == column or v in user_cat_input}
+
             elif all(isinstance(val, (int, float)) for val in df[column]):
                 _min = float(min(df[column]))
                 _max = float(max(df[column]))
@@ -40,9 +41,17 @@ def filter_dataframe(df: dict) -> dict:
                     value=(_min, _max),
                     step=step,
                 )
-                df = {k: v for k, v in df.items() if k == column or (isinstance(v, (int, float)) and v >= user_num_input[0] and v <= user_num_input[1])}
+                df = df[df.Time <= user_num_input[1]]
+            elif len(set(df[column])) > 100:
+                meal_type = st.selectbox(
+                f"Values for {column}",
+                [item for sublist in meal_type for item in sublist],
+                default=None,
+                )
+                df = {k: v for k, v in df.items() if k == column or any(meal_type_word in v for meal_type_word in meal_type)}
+
             else:
-                user_text_input = right.text_input(
+                user_text_input = right.selectbox(
                 f"Substring or regex in {column}",
                 )
                 if user_text_input:

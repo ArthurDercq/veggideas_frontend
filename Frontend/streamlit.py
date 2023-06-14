@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 import requests
 import io
+import numpy as np
 import pandas as pd
 from filter_df import filter_dataframe
 
@@ -60,10 +61,13 @@ if img_file_buffer is not None:
             if response.status_code == 200:
                 # Parse the predictions from the JSON response
                 data = response.json()
-                st.write(data[0])
-                df = pd.DataFrame(data[1])
+                st.write(f"Yep! I'm {np.round(data[1])}% sure that it's a {data[0]}")
+                df = pd.DataFrame(data[2])
 
                 filtering = st.container()
+                #df = filter_dataframe(df)
+                #st.dataframe(df)
+
                 with filtering:
                     modify = st.checkbox("Filter result?")
                     if modify:
