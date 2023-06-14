@@ -45,8 +45,13 @@ if img_file_buffer is not None:
     #pescatarian = st.checkbox('pescatarian')
     #surprise = st.checkbox('surprise me')
     # Make predictions when the user clicks the button
-    modify = st.checkbox("Add filters")
-    if st.button('Make Predictions'):
+    with st.form("Basic form"):
+        modify = st.checkbox("Add filters")
+        #make_predictions = st.button("Make predictions")
+        submitted = st.form_submit_button("Make predictions")
+        if submitted:
+         st.write("predictions")
+
         with st.spinner("Wait for it..."):
             # Send the image to the API endpoint
             image_bytes = img_file_buffer.getvalue()
@@ -56,6 +61,7 @@ if img_file_buffer is not None:
             # Use 'rb' if you get an error about 'bytes-like object is required, not str'
             api_url = api_url + "/predict"
             response = requests.post(api_url, files={'img': image_bytes})
+            #response = st.cache_data(response)
             st.write(response.status_code)
             st.write(response.raise_for_status)
             if response.status_code == 200:
@@ -63,12 +69,15 @@ if img_file_buffer is not None:
                 data = response.json()
                 # Create a DataFrame from the predictions data
                 df = pd.DataFrame(data)
+
+                # Create a DataFrame from the predictions data
+                # Create a DataFrame from the predictions data
                 if modify:
-                    df = filter_dataframe(df)
-                 # Display the predictions as a table
-                st.subheader("Recepis:")
+                    to_filter_columns = st.multiselect("Filter dataframe on", list(df.keys()))
+                    df = filter_dataframe(df, to_filter_columns)
                 st.dataframe(df)
-                """if vegetarian:
+                """
+                if vegetarian:
                     st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegetarian' in x)])
                 if vegan:
                     st.dataframe(df[df['Diet Type'].apply(lambda x: 'Vegan' in x)])
@@ -79,5 +88,5 @@ if img_file_buffer is not None:
                 if surprise:
                     st.dataframe(df)"""
 
-            else:
-                st.error("Error making predictions. Please try again.")
+           # else:
+                #st.error("Error making predictions. Please try again.")
