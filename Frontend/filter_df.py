@@ -4,6 +4,7 @@ import streamlit as st
 
 #def filter_dataframe(df: dict, to_filter_columns) -> dict:
 def filter_dataframe(df):
+
     """
     Adds a UI on top of a dataframe to let viewers filter columns
 
@@ -18,7 +19,7 @@ def filter_dataframe(df):
 
     with modification_container:
         filtered_columns = ["Time", "Meal Type", "Diet Type", "Cuisine", "Ingredients"]
-        to_filter_columns = st.multiselect("Filter dataframe on", filtered_columns)
+        to_filter_columns = st.multiselect("Filter recipes on", filtered_columns)
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
             left.write("↳")
