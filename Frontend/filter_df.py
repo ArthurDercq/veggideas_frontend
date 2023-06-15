@@ -17,7 +17,7 @@ def filter_dataframe(df):
     modification_container = st.container()
 
     with modification_container:
-        filtered_columns = df["Time", "Meal Type", "Diet Type", "Cuisine", "Ingredients"]
+        filtered_columns = ["Time", "Meal Type", "Diet Type", "Cuisine", "Ingredients"]
         to_filter_columns = st.multiselect("Filter dataframe on", filtered_columns)
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
@@ -28,7 +28,7 @@ def filter_dataframe(df):
                 _max = float(max(df[column]))
                 step = (_max - _min) / 100
                 user_num_input = right.slider(
-                    f"Values for {column}",
+                    f"Cooking time {column}",
                     min_value=_min,
                     max_value=_max,
                     value=(_min, _max),
@@ -37,7 +37,7 @@ def filter_dataframe(df):
                 df = df[df.Time <= user_num_input[1]]
 
             elif column == "Meal Type":
-                meal_type = right.selectbox("Choose mealtype", get_values(df[column]))
+                meal_type = right.selectbox("Choose your mealtype", get_values(df[column]))
                 df = df[df["Meal Type"].apply(lambda x: meal_type in x)]
 
             elif column == "Diet Type":
@@ -45,13 +45,13 @@ def filter_dataframe(df):
                 df = df[df["Diet Type"].apply(lambda x: all(option in x for option in options))]
 
             elif column == "Cuisine":
-                cuisine = right.multiselect("Choose a cuisine from the options", df[column])
+                cuisine = right.multiselect("Choose a cuisine from the options", df[column].unique())
                 if cuisine:
                     df = df[df["Cuisine"].apply(lambda x: x in cuisine)]
 
             elif column == "Ingredients":
                 user_text_input = right.text_input(
-                    f"Substring or regex in {column}",
+                    f"Which ingredient do you want to add",
                     )
                 if user_text_input:
                     df = df[df[column].astype(str).str.contains(user_text_input)]

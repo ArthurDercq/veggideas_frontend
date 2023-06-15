@@ -78,5 +78,3 @@ if img_file_buffer is not None:
 
             else:
                 st.error("Error making predictions. Please try again.")
-
-a
