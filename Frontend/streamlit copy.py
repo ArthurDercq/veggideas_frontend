@@ -1,18 +1,23 @@
 import streamlit as st
 from PIL import Image
 import requests
+import io
+import numpy as np
 import pandas as pd
 from filter_df import filter_dataframe
 from streamlit_option_menu import option_menu
 
 
+# Set page tab display
 
+# API URL for vegetable recognition
 api_url = "https://veggideas-5s5h4zi4hq-ew.a.run.app"
 api_url = api_url + "/predict"
 
 
 
 
+st.markdown("---")
 def main():
     def on_change(key):
         selection = st.session_state[key]
@@ -21,8 +26,6 @@ def main():
     selected_option = option_menu(None, ["Upload", "About us"],
                         icons=['cloud-upload', 'gear'],
                         on_change=on_change, key='menu_5', orientation="horizontal")
-
-
     if selected_option == "About us":
         # Home Page
 
@@ -57,8 +60,7 @@ def main():
             """)
 
     elif selected_option == "Upload":
-        # Upload Page
-        st.title("Vegetable Recognition")
+        ### Create a native Streamlit file upload input
         st.markdown("### Let's do vegetable recognition 👇")
         img_file_buffer = st.file_uploader('Upload an image')
 
@@ -66,31 +68,41 @@ def main():
             # Display the image uploaded by the user
             image = Image.open(img_file_buffer)
             st.image(image, caption="Here's the image you uploaded ☝️")
-
             # Make predictions when the user clicks the button
-            if st.button("Make predictions"):
-                with st.spinner("Wait for it..."):
-                    # Send the image to the API endpoint
+            #with st.form("Basic form"):
+                #modify = st.checkbox("Add filters")
+                #make_predictions = st.button("Make predictions")
+                #submitted = st.form_submit_button("Make predictions")
+                #if submitted:
+                    #st.write("predictions")
+
+            with st.spinner("Wait for it..."):
+                        # Send the image to the API endpoint
                     image_bytes = img_file_buffer.getvalue()
+
                     st.write("Sending image to the API...")
 
-                    # Use 'rb' if you get an error about 'bytes-like object is required, not str'
-                    response = requests.post(api_url, files={'img': image_bytes})
+                        # Use 'rb' if you get an error about 'bytes-like object is required, not str'
 
+                    response = requests.post(api_url, files={'img': image_bytes})
+                        #response = st.cache_data(response)
                     if response.status_code == 200:
                         # Parse the predictions from the JSON response
                         data = response.json()
-                        st.write(data[0])
+                        st.write(f"Yep! I'm {np.round(data[1])}% sure that it's a {data[0]}")
                         df = pd.DataFrame(data[2])
-                        st.write(df)
 
-                        # Filtering option
-                        modify = st.checkbox("Filter result?")
-                        if modify:
-                            filtered_df = filter_dataframe(df)
-                            st.write(filtered_df)
-                        else:
-                            st.write(df)
+                        filtering = st.container()
+                        #df = filter_dataframe(df)
+                        #st.dataframe(df)
+
+                        with filtering:
+                            modify = st.checkbox("Filter result?")
+                            if modify:
+                                df = filter_dataframe(df)
+                                st.dataframe(df)
+                            else:
+                                st.dataframe(df)
 
                     else:
                         st.error("Error making predictions. Please try again.")
