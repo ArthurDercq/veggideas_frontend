@@ -114,10 +114,5 @@ def main():
                     else:
                         st.error("Error making predictions. Please try again.")
 
-<<<<<<< HEAD
-            else:
-                st.error("Error making predictions. Please try again.")
-=======
 if __name__ == "__main__":
     main()
->>>>>>> master
