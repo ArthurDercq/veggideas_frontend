@@ -18,9 +18,15 @@ api_url = api_url + "/predict"
 
 
 
-st.markdown("<div style='text-align:center;padding:20px;background-color:#66BB6A;border-radius:10px;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 6px 8px rgba(0, 0, 0, 0.1);'>"
-            "<h1 style='color:white;font-size:56px;font-weight:bold;font-family:\"EB Garamond\", Garamond, serif;'>Veggideas</h1>"
-            "</div>", unsafe_allow_html=True)
+#st.markdown("<div style='text-align:center;padding:20px;background-color:#66BB6A;border-radius:10px;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 6px 8px rgba(0, 0, 0, 0.1);'>"
+            #"<h1 style='color:white;font-size:56px;font-weight:bold;font-family:\"EB Garamond\", Garamond, serif;'>Veggideas</h1>"
+            #"</div>", unsafe_allow_html=True)
+
+st.set_page_config(layout="wide")
+
+image = Image.open("./Frontend/veggideas.png")
+
+st.image(image)
 
 
 st.markdown("---")
@@ -70,13 +76,27 @@ def main():
 
 
 
-        st.markdown("""### Capture and Upload a vegetable picture to discover amazing recipes👇""")
-        img_file_buffer = st.file_uploader('### Upload an image')
+        st.markdown("""### Capture and upload a vegetable picture to discover amazing recipes👇""")
+        img_file_buffer = st.file_uploader('### Upload your veggie')
 
         if img_file_buffer is not None:
             # Display the image uploaded by the user
             image = Image.open(img_file_buffer)
-            st.image(image, caption="Here's the image you uploaded ☝️")
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                st.write(' ')
+
+            with col2:
+                st.image(image, caption="Here's the image you uploaded ☝️", width=450)
+
+            with col3:
+                st.write(' ')
+
+
+
+
             # Make predictions when the user clicks the button
             #with st.form("Basic form"):
                 #modify = st.checkbox("Add filters")
@@ -96,7 +116,20 @@ def main():
                     if response.status_code == 200:
                         # Parse the predictions from the JSON response
                         data = response.json()
-                        st.write(f"Yep! I'm {np.round(data[1])}% sure that it's a {data[0]}")
+                        col1, col2, col3 = st.columns(3)
+
+                        with col1:
+                            st.write(' ')
+
+                        with col2:
+                            st.markdown(f"#### Yep! I'm {np.round(data[1])}% sure that it's a {data[0]}")
+
+                        with col3:
+                            st.write(' ')
+
+
+                        st.divider()
+                        st.markdown("## Let's have a look at the recipes 👇")
                         df = pd.DataFrame(data[2])
 
 
@@ -115,5 +148,8 @@ def main():
                     else:
                         st.error("Error making predictions. Please try again.")
 
+
+
 if __name__ == "__main__":
+
     main()
