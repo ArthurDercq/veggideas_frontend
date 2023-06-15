@@ -17,7 +17,7 @@ def filter_dataframe(df):
     modification_container = st.container()
 
     with modification_container:
-        filtered_columns = df["Time", "Meal Type", "Diet Type", "Cuisine", "Ingredients"]
+        filtered_columns = ["Time", "Meal Type", "Diet Type", "Cuisine", "Ingredients"]
         to_filter_columns = st.multiselect("Filter dataframe on", filtered_columns)
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
