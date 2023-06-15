@@ -36,12 +36,17 @@ def filter_dataframe(df):
                 df = df[df.Time <= user_num_input[1]]
 
             elif column == "Meal Type":
-                meal_type = right.multiselect("Choose mealtype", get_values(df[column]))
-                df = df[df.]
+                meal_type = right.selectbox("Choose mealtype", get_values(df[column]))
+                df = df[df["Meal Type"].apply(lambda x: meal_type in x)]
 
-            elif column == "Meal Type" or column == "Diet Type":
-                option = right.multiselect("Choose a diet from the options", get_values(df[column]))
-                st.write(option)
+            elif column == "Diet Type":
+                options = right.multiselect("Choose a diet from the options", get_values(df[column]))
+                df = df[df["Diet Type"].apply(lambda x: all(option in x for option in options))]
+
+            elif column == "Cuisine":
+                cuisine = right.multiselect("Choose a cuisine from the options", df[column])
+                if cuisine:
+                    df = df[df["Cuisine"].apply(lambda x: x in cuisine)]
 
 
         return df
