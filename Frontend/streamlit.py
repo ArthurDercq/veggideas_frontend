@@ -17,6 +17,12 @@ api_url = api_url + "/predict"
 
 
 
+
+st.markdown("<div style='text-align:center;padding:20px;background-color:#66BB6A;border-radius:10px;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 6px 8px rgba(0, 0, 0, 0.1);'>"
+            "<h1 style='color:white;font-size:56px;font-weight:bold;font-family:\"EB Garamond\", Garamond, serif;'>Veggideas</h1>"
+            "</div>", unsafe_allow_html=True)
+
+
 st.markdown("---")
 def main():
     def on_change(key):
@@ -61,8 +67,11 @@ def main():
 
     elif selected_option == "Upload":
         ### Create a native Streamlit file upload input
-        st.markdown("### Let's do vegetable recognition 👇")
-        img_file_buffer = st.file_uploader('Upload an image')
+
+
+
+        st.markdown("""### Capture and Upload a vegetable picture to discover amazing recipes👇""")
+        img_file_buffer = st.file_uploader('### Upload an image')
 
         if img_file_buffer is not None:
             # Display the image uploaded by the user
@@ -76,11 +85,9 @@ def main():
                 #if submitted:
                     #st.write("predictions")
 
-            with st.spinner("Wait for it..."):
+            with st.spinner("Wait for it... Analyzing the image"):
                         # Send the image to the API endpoint
                     image_bytes = img_file_buffer.getvalue()
-
-                    st.write("Sending image to the API...")
 
                         # Use 'rb' if you get an error about 'bytes-like object is required, not str'
 
@@ -97,7 +104,7 @@ def main():
                         #st.dataframe(df)
 
                         with filtering:
-                            modify = st.checkbox("Filter result?")
+                            modify = st.checkbox("Do you want to add filters?")
                             if modify:
                                 df = filter_dataframe(df)
                                 st.dataframe(df)
