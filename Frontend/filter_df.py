@@ -21,16 +21,8 @@ def filter_dataframe(df):
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
             left.write("↳")
-            # Treat columns with < 10 unique values as categorical
-            if isinstance(df[column], list) and len(set(df[column])) < 100:
-                user_cat_input = st.selectbox(
-                    f"Values for {column}",
-                    list(set(df[column])),
-                    default=list(set(df[column])),
-                )
-                df = {k: v for k, v in df.items() if k == column or v in user_cat_input}
 
-            elif all(isinstance(val, (int, float)) for val in df[column]):
+            if all(isinstance(val, (int, float)) for val in df[column]):
                 _min = float(min(df[column]))
                 _max = float(max(df[column]))
                 step = (_max - _min) / 100
@@ -42,19 +34,22 @@ def filter_dataframe(df):
                     step=step,
                 )
                 df = df[df.Time <= user_num_input[1]]
-            elif len(set(df[column])) > 100:
-                meal_type = st.selectbox(
-                f"Values for {column}",
-                [item for sublist in meal_type for item in sublist],
-                default=None,
-                )
-                df = {k: v for k, v in df.items() if k == column or any(meal_type_word in v for meal_type_word in meal_type)}
 
-            else:
-                user_text_input = right.selectbox(
-                f"Substring or regex in {column}",
-                )
-                if user_text_input:
-                    df = {k: v for k, v in df.items() if k == column or (isinstance(v, str) and user_text_input in v)}
+            elif column == "Meal Type":
+                meal_type = right.multiselect("Choose mealtype", get_values(df[column]))
+                df = df[df.]
+
+            elif column == "Meal Type" or column == "Diet Type":
+                option = right.multiselect("Choose a diet from the options", get_values(df[column]))
+                st.write(option)
+
 
         return df
+
+
+def get_values(column):
+    values = set()
+    for list in column:
+        for word in list:
+            values.add(word)
+    return values
