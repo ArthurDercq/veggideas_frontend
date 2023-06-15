@@ -17,7 +17,8 @@ def filter_dataframe(df):
     modification_container = st.container()
 
     with modification_container:
-        to_filter_columns = st.multiselect("Filter dataframe on", df.columns)
+        filtered_columns = df["Time", "Meal Type", "Diet Type", "Cuisine", "Ingredients"]
+        to_filter_columns = st.multiselect("Filter dataframe on", filtered_columns)
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
             left.write("↳")
@@ -47,6 +48,14 @@ def filter_dataframe(df):
                 cuisine = right.multiselect("Choose a cuisine from the options", df[column])
                 if cuisine:
                     df = df[df["Cuisine"].apply(lambda x: x in cuisine)]
+
+            elif column == "Ingredients":
+                user_text_input = right.text_input(
+                    f"Substring or regex in {column}",
+                    )
+                if user_text_input:
+                    df = df[df[column].astype(str).str.contains(user_text_input)]
+
 
 
         return df
