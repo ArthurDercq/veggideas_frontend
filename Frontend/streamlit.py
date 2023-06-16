@@ -115,6 +115,8 @@ def main():
                         #response = st.cache_data(response)
                     if response.status_code == 200:
                         # Parse the predictions from the JSON response
+                        st.markdown("##")
+
                         data = response.json()
                         col1, col2, col3 = st.columns(3)
 
@@ -122,14 +124,16 @@ def main():
                             st.write(' ')
 
                         with col2:
-                            st.markdown(f"#### Yep! I'm {np.round(data[1])}% sure that it's a {data[0]}")
+                            st.markdown(f"### I'm {np.round(data[1])}% sure that it's a {data[0]}!")
 
                         with col3:
                             st.write(' ')
 
-
+                        st.markdown("##")
                         st.divider()
-                        st.markdown("## Let's have a look at the recipes 👇")
+                        st.markdown(f"## Let's have a look at the recipes with {data[0]} 👇")
+                        st.markdown("##")
+
                         df = pd.DataFrame(data[2])
 
 
@@ -139,6 +143,7 @@ def main():
 
                         with filtering:
                             modify = st.checkbox("Do you want to add filters?")
+                            st.markdown("##")
                             if modify:
                                 df = filter_dataframe(df)
                                 st.dataframe(df)
